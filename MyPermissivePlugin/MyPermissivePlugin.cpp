@@ -1,43 +1,53 @@
 #include "MyPermissivePlugin.h"
-#include "IPlug_include_in_plug_src.h"
-#include "IControls.h"
 
-MyPermissivePlugin::MyPermissivePlugin(const InstanceInfo& info)
-: iplug::Plugin(info, MakeConfig(kNumParams, kNumPresets))
-{
-  GetParam(kGain)->InitDouble("Gain", 0., 0., 100.0, 0.01, "%");
+// ============================================================================
+// MyPermissivePlugin Implementation — Gain plugin using EWOL template
+// ============================================================================
 
-#if IPLUG_EDITOR // http://bit.ly/2S64BDd
-  mMakeGraphicsFunc = [&]() {
-    return MakeGraphics(*this, PLUG_WIDTH, PLUG_HEIGHT, PLUG_FPS, GetScaleForScreen(PLUG_WIDTH, PLUG_HEIGHT));
+MyPermissivePlugin::MyPermissivePlugin(const InstanceInfo &info)
+    : EWPlugin(info, MakeConfig(kNumParams)) {
+
+#if IPLUG_EDITOR
+  mMakeGraphicsFunc = []() {
+    return MakeGraphics(*this, 480, 360, ScreenScale());
   };
-  
-  mLayoutFunc = [&](IGraphics* pGraphics) {
-    pGraphics->AttachCornerResizer(EUIResizerMode::Scale, false);
-    pGraphics->AttachPanelBackground(COLOR_GRAY);
-    pGraphics->LoadFont("Roboto-Regular", ROBOTO_FN);
-    const IRECT bounds = pGraphics->GetBounds();
-    const IRECT innerBounds = bounds.GetPadded(-10.f);
-    const IRECT versionBounds = innerBounds.GetFromTRHC(300, 20);
-    pGraphics->AttachControl(new ITextControl(innerBounds.GetMidVPadded(50), "Hello iPlug 2!", IText(50)));
-    pGraphics->AttachControl(new IVKnobControl(innerBounds.GetCentredInside(100).GetVShifted(-100), kGain));
-    WDL_String buildInfoStr;
-    GetBuildInfoStr(buildInfoStr, __DATE__, __TIME__);
-    pGraphics->AttachControl(new ITextControl(versionBounds, buildInfoStr.Get(), DEFAULT_TEXT.WithAlign(EAlign::Far)));
+
+  mLayoutFunc = [&](IGraphics *pGraphics) {
+    pGraphics->AttachCornerResizer(EUIResizerMode::Scale, true);
+
+    // Optional: load custom font
+    // const auto font = pGraphics->GetFont("Roboto-Regular.ttf");
+
+    SetupLayout(pGraphics);
   };
 #endif
+
+  // Single gain parameter: 0% — 100%
+  GetParam(kGain)
+      ->InitDouble("GAIN", 100.0, 0.0, 100.0, 0.1, "%")
+      ->SetRange(0.0, 1.0)
+      ->MakeGeneric();
 }
 
-#if IPLUG_DSP
-void MyPermissivePlugin::ProcessBlock(sample** inputs, sample** outputs, int nFrames)
-{
-  const double gain = GetParam(kGain)->Value() / 100.;
-  const int nChans = NOutChansConnected();
-  
+void MyPermissivePlugin::SetupLayout(IGraphics *pGraphics) {
+  // No extra controls needed — the single knob is auto-generated.
+  // This method is empty by design for simple plugins.
+}
+
+void MyPermissivePlugin::ProcessBlock(sample **inputs, sample **outputs,
+                                      int nFrames) {
+  float gain = GetParam(kGain)->Value(); // 0.0 — 1.0
+
+  const int numIn = GetNumInputChannels();
+  const int numOut = GetNumOutputChannels();
+  const int minCh = (numIn < numOut) ? numIn : numOut;
+
   for (int s = 0; s < nFrames; s++) {
-    for (int c = 0; c < nChans; c++) {
+    for (int c = 0; c < minCh; c++) {
       outputs[c][s] = inputs[c][s] * gain;
+    }
+    for (int c = minCh; c < numOut; c++) {
+      outputs[c][s] = 0.0;
     }
   }
 }
-#endif

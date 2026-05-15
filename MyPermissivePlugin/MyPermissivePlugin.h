@@ -1,24 +1,51 @@
 #pragma once
 
-#include "IPlug_include_in_plug_hdr.h"
+// ============================================================================
+// MyPermissivePlugin — EwolFX template proof of concept
+// A gain plugin demonstrating the EWOL framework.
+// ============================================================================
 
-const int kNumPresets = 1;
+#include "EWOL/EWOL.h"
 
-enum EParams
-{
-  kGain = 0,
-  kNumParams
-};
+// ── Plugin metadata ───────────────────────────────────────────────────────
 
-using namespace iplug;
-using namespace igraphics;
+#define EWOLFX_PLUGIN_NAME "MyPermissivePlugin"
+#define EWOLFX_ACCENT Accent::Green // Generic/utility accent
+#define EWOLFX_NUM_KNOBS 1          // Single gain knob
+#define EWOLFX_VERSION "1.0.0"
 
-class MyPermissivePlugin final : public Plugin
-{
+// ── Parameter enum ────────────────────────────────────────────────────────
+
+enum EParams { kGain = 0, kNumParams };
+
+// ── Plugin class ──────────────────────────────────────────────────────────
+
+class MyPermissivePlugin : public EWPlugin {
 public:
-  MyPermissivePlugin(const InstanceInfo& info);
+  const char *GetPluginName() const override { return EWOLFX_PLUGIN_NAME; }
+  Accent GetAccent() const override { return EWOLFX_ACCENT; }
+  int GetNumKnobs() const override { return EWOLFX_NUM_KNOBS; }
 
-#if IPLUG_DSP // http://bit.ly/2S64BDd
-  void ProcessBlock(sample** inputs, sample** outputs, int nFrames) override;
+  MyPermissivePlugin(const InstanceInfo &info);
+
+#if IPLUG_DSP
+  void ProcessBlock(sample **inputs, sample **outputs, int nFrames) override;
 #endif
+
+private:
+  void SetupLayout(IGraphics *pGraphics) override;
 };
+
+// ── Plugin entry point (REQUIRED) ─────────────────────────────────────────
+
+Plugin *OnCreate(const char * /*version*/) {
+  return new MyPermissivePlugin(InstanceInfo::Create());
+}
+
+#if IPLUG_EDIT_API
+#include "plugadapter.h"
+iplug::edit_api::PluginAdapter *
+OnCreateEditAdapter(const iplug::edit_api::HostInfo &host) {
+  return new iplug::edit_api::PluginAdapter<MyPermissivePlugin>(host);
+}
+#endif
