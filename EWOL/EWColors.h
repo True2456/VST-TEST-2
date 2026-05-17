@@ -1,59 +1,101 @@
 #pragma once
 
-#include "IPlug_include_in_plug_hdr.h"
-#include "IPlug_include_in_plug_src.h"
+// EWColors — Color palette for EwolFX plugins
+// Must be included AFTER IGraphics.h is available (via EWOL.h)
 
-// ============================================================================
-// EwolFX Color Palette — Centralized for easy theming
-// All plugins share the base palette; each plugin selects ONE accent color.
-// ============================================================================
+#include "IGraphics.h"
 
 namespace EWColors {
 
 // ── Base palette (unchanging across all plugins) ──────────────────────────
 
 struct BG {
-  static constexpr IColor Main = IColor(17, 17, 17, 255);    // #111111
-  static constexpr IColor Panel = IColor(22, 22, 22, 255);   // #161616
-  static constexpr IColor Border = IColor(42, 42, 42, 255);  // #2a2a2a
-  static constexpr IColor Divider = IColor(50, 50, 50, 255); // #323232
+  static inline const iplug::igraphics::IColor Main = [] {
+    return iplug::igraphics::IColor(255, 17, 17, 17);
+  }(); // #111111
+  static inline const iplug::igraphics::IColor Panel = [] {
+    return iplug::igraphics::IColor(255, 22, 22, 22);
+  }(); // #161616
+  static inline const iplug::igraphics::IColor Border = [] {
+    return iplug::igraphics::IColor(255, 42, 42, 42);
+  }(); // #2a2a2a
+  static inline const iplug::igraphics::IColor Divider = [] {
+    return iplug::igraphics::IColor(255, 50, 50, 50);
+  }(); // #323232
 };
 
 struct Knob {
-  static constexpr IColor Body = IColor(30, 30, 30, 255);      // #1e1e1e
-  static constexpr IColor Track = IColor(42, 42, 42, 255);     // #2a2a2a
-  static constexpr IColor Highlight = IColor(55, 55, 55, 255); // #373737
+  static inline const iplug::igraphics::IColor Body = [] {
+    return iplug::igraphics::IColor(255, 30, 30, 30);
+  }(); // #1e1e1e
+  static inline const iplug::igraphics::IColor Track = [] {
+    return iplug::igraphics::IColor(255, 42, 42, 42);
+  }(); // #2a2a2a
+  static inline const iplug::igraphics::IColor Highlight = [] {
+    return iplug::igraphics::IColor(255, 55, 55, 55);
+  }(); // #373737
 };
 
 struct Text {
-  static constexpr IColor Label = IColor(136, 136, 136, 255);  // #888888
-  static constexpr IColor Value = IColor(224, 224, 224, 255);  // #e0e0e0
-  static constexpr IColor Brand = IColor(170, 170, 170, 255);  // #aaaaaa
-  static constexpr IColor Footer = IColor(85, 85, 85, 255);    // #555555
-  static constexpr IColor Copyright = IColor(68, 68, 68, 255); // #444444
+  static inline const iplug::igraphics::IColor Label = [] {
+    return iplug::igraphics::IColor(255, 136, 136, 136);
+  }(); // #888888
+  static inline const iplug::igraphics::IColor Value = [] {
+    return iplug::igraphics::IColor(255, 224, 224, 224);
+  }(); // #e0e0e0
+  static inline const iplug::igraphics::IColor Brand = [] {
+    return iplug::igraphics::IColor(255, 170, 170, 170);
+  }(); // #aaaaaa
+  static inline const iplug::igraphics::IColor Footer = [] {
+    return iplug::igraphics::IColor(255, 85, 85, 85);
+  }(); // #555555
+  static inline const iplug::igraphics::IColor Copyright = [] {
+    return iplug::igraphics::IColor(255, 68, 68, 68);
+  }(); // #444444
 };
 
 struct Led {
-  static constexpr IColor Off = IColor(42, 42, 42, 255); // #2a2a2a
+  static inline const iplug::igraphics::IColor Off = [] {
+    return iplug::igraphics::IColor(255, 42, 42, 42);
+  }(); // #2a2a2a
 };
 
 struct Button {
-  static constexpr IColor Fill = IColor(30, 30, 30, 255);       // #1e1e1e
-  static constexpr IColor BorderOff = IColor(50, 50, 50, 255);  // #323232
-  static constexpr IColor FillActive = IColor(40, 40, 40, 255); // #282828
+  static inline const iplug::igraphics::IColor Fill = [] {
+    return iplug::igraphics::IColor(255, 30, 30, 30);
+  }(); // #1e1e1e
+  static inline const iplug::igraphics::IColor BorderOff = [] {
+    return iplug::igraphics::IColor(255, 50, 50, 50);
+  }(); // #323232
+  static inline const iplug::igraphics::IColor FillActive = [] {
+    return iplug::igraphics::IColor(255, 40, 40, 40);
+  }(); // #282828
 };
 
 // ── Per-plugin accent colors (selected at compile time) ───────────────────
 
 struct Accent {
-  static constexpr IColor Amber = IColor(232, 168, 50, 255); // Delay / Echo
-  static constexpr IColor Blue = IColor(74, 144, 217, 255);  // Reverb
-  static constexpr IColor Red = IColor(217, 74, 74, 255); // Distortion / Drive
-  static constexpr IColor Purple = IColor(155, 89, 182, 255); // Modulation
-  static constexpr IColor Teal = IColor(26, 188, 156, 255);   // Compression
-  static constexpr IColor Orange = IColor(230, 126, 34, 255); // Filter / EQ
-  static constexpr IColor Green =
-      IColor(46, 204, 113, 255); // Generic / Utility
+  static inline const iplug::igraphics::IColor Amber = [] {
+    return iplug::igraphics::IColor(255, 232, 168, 50);
+  }(); // Delay / Echo
+  static inline const iplug::igraphics::IColor Blue = [] {
+    return iplug::igraphics::IColor(255, 74, 144, 217);
+  }(); // Reverb
+  static inline const iplug::igraphics::IColor Red = [] {
+    return iplug::igraphics::IColor(255, 217, 74, 74);
+  }(); // Distortion / Drive
+  static inline const iplug::igraphics::IColor Purple = [] {
+    return iplug::igraphics::IColor(255, 155, 89, 182);
+  }(); // Modulation
+  static inline const iplug::igraphics::IColor Teal = [] {
+    return iplug::igraphics::IColor(255, 26, 188, 156);
+  }(); // Compression
+  static inline const iplug::igraphics::IColor Orange = [] {
+    return iplug::igraphics::IColor(255, 230, 126, 34);
+  }(); // Filter / EQ
+  static inline const iplug::igraphics::IColor Green = [] {
+    return iplug::igraphics::IColor(255, 46, 204, 113);
+  }(); // Generic / Utility
 };
 
 } // namespace EWColors

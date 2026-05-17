@@ -3,7 +3,7 @@ project(MyPermissivePlugin VERSION 1.0.0)
 
 # Discover IPLUG2_DIR if not already set (for independent builds)
 if(NOT DEFINED IPLUG2_DIR)
-  set(IPLUG2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." CACHE PATH "iPlug2 root directory")
+  set(IPLUG2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/iplug2" CACHE PATH "iPlug2 root directory")
 endif()
 
 # Discover EWOL_DIR if not already set
